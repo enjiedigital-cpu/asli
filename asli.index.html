@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Zakat Rejang Lebong</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=LPMQ&display=swap" rel="stylesheet">
+    <style>
+        /* Menambahkan font khusus untuk tulisan Arab */
+        .font-arabic {
+            font-family: 'LPMQ', 'Traditional Arabic', serif;
+        }
+        /* Style untuk tab yang aktif */
+        .active-tab {
+            background-color: #facc15; /* yellow-400 */
+            color: #1f2937; /* gray-800 */
+            font-weight: bold;
+        }
+        /* Style untuk tab yang tidak aktif */
+        .inactive-tab {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+        }
+        /* Efek hover untuk semua tab */
+        .tab-button:hover {
+            background-color: #fde047; /* yellow-300 */
+            color: #1f2937; /* gray-800 */
+        }
+    </style>
+</head>
+<body class="bg-green-800 text-gray-800 font-sans">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-2xl">
+        
+        <!-- Header Aplikasi -->
+        <div class="text-center text-white mb-6">
+            <h2 class="text-4xl md:text-5xl font-arabic mb-2">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</h2>
+            <h1 class="text-2xl md:text-3xl font-bold">Kalkulator Zakat Rejang Lebong</h1>
+        </div>
+
+        <!-- Konten Utama -->
+        <div class="bg-white rounded-2xl shadow-2xl p-6">
+            
+            <!-- Navigasi Tab -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+                <button id="tab-fitrah" class="tab-button p-3 rounded-lg transition-all duration-300">Zakat Fitrah</button>
+                <button id="tab-penghasilan" class="tab-button p-3 rounded-lg transition-all duration-300">Zakat Penghasilan</button>
+                <button id="tab-harta" class="tab-button p-3 rounded-lg transition-all duration-300">Zakat Harta</button>
+                <button id="tab-pertanian" class="tab-button p-3 rounded-lg transition-all duration-300">Zakat Pertanian</button>
+            </div>
+
+            <!-- Panel Zakat Fitrah -->
+            <div id="panel-fitrah" class="calculator-panel">
+                <h3 class="text-xl font-bold text-green-700 mb-4">Zakat Fitrah</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="jumlah-orang" class="font-semibold">Jumlah Jiwa</label>
+                        <input type="number" id="jumlah-orang" class="w-full p-2 border border-gray-300 rounded-md mt-1" placeholder="Contoh: 4">
+                    </div>
+                    <div>
+                        <label for="harga-beras" class="font-semibold">Harga Beras per Liter / Kg (Rp)</label>
+                        <input type="text" id="harga-beras" class="w-full p-2 border border-gray-300 rounded-md mt-1" placeholder="Contoh: 15.000" oninput="formatInput(this)">
+                    </div>
+                    <button onclick="hitungFitrah()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors">HITUNG ZAKAT FITRAH</button>
+                </div>
+                <div id="hasil-fitrah" class="hidden mt-4 p-4 rounded-lg bg-yellow-300 text-yellow-900 font-bold text-lg text-center"></div>
+                <div class="mt-6 p-4 border-l-4 border-green-500 bg-green-50 text-sm">
+                    <h4 class="font-bold mb-2">Keterangan:</h4>
+                    <p>Zakat Fitrah adalah zakat yang wajib dikeluarkan umat Islam menjelang Idul Fitri. Besaran zakat fitrah adalah <strong>2.5 kg atau 3.5 liter</strong> makanan pokok (beras) per jiwa. Zakat ini juga dapat dibayarkan dalam bentuk uang seharga makanan pokok tersebut.</p>
+                </div>
+            </div>
+
+            <!-- Panel Zakat Penghasilan -->
+            <div id="panel-penghasilan" class="calculator-panel hidden">
+                <h3 class="text-xl font-bold text-green-700 mb-4">Zakat Penghasilan (Profesi)</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="penghasilan" class="font-semibold">Penghasilan per Bulan (Rp)</label>
+                        <input type="text" id="penghasilan" class="w-full p-2 border border-gray-300 rounded-md mt-1" placeholder="Gaji, bonus, dll." oninput="formatInput(this)">
+                    </div>
+                    <div>
+                        <label for="harga-emas-profesi" class="font-semibold">Asumsi Harga Emas per Gram (Rp)</label>
+                        <input type="text" id="harga-emas-profesi" value="1.300.000" class="w-full p-2 border border-gray-300 rounded-md mt-1" oninput="formatInput(this)">
+                    </div>
+                    <button onclick="hitungPenghasilan()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors">HITUNG ZAKAT PENGHASILAN</button>
+                </div>
+                <div id="hasil-penghasilan" class="hidden mt-4 p-4 rounded-lg bg-yellow-300 text-yellow-900 font-bold text-lg text-center"></div>
+                <div class="mt-6 p-4 border-l-4 border-green-500 bg-green-50 text-sm">
+                    <h4 class="font-bold mb-2">Keterangan:</h4>
+                    <p>Zakat penghasilan dikeluarkan dari harta yang diperoleh dari hasil profesi. Nisab (batas wajib zakat) adalah setara dengan harga <strong>85 gram emas</strong> per tahun. Kadar zakatnya adalah <strong>2.5%</strong>. Zakat dapat dibayarkan bulanan atau tahunan jika penghasilan sudah mencapai nisab.</p>
+                </div>
+            </div>
+
+            <!-- Panel Zakat Harta -->
+            <div id="panel-harta" class="calculator-panel hidden">
+                <h3 class="text-xl font-bold text-green-700 mb-4">Zakat Harta (Maal)</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="tabungan" class="font-semibold">Uang Tunai, Tabungan, Deposito (Rp)</label>
+                        <input type="text" id="tabungan" class="w-full p-2 border border-gray-300 rounded-md mt-1" placeholder="Total simpanan" oninput="formatInput(this)">
+                    </div>
+                    <div>
+                        <label for="harta-lain" class="font-semibold">Harta Lain (Emas, Saham, Piutang) (Rp)</label>
+                        <input type="text" id="harta-lain" class="w-full p-2 border border-gray-300 rounded-md mt-1" placeholder="Nilai aset lain" oninput="formatInput(this)">
+                    </div>
+                     <div>
+                        <label for="utang" class="font-semibold">Utang Jatuh Tempo (Rp)</label>
+                        <input type="text" id="utang" class="w-full p-2 border border-gray-300 rounded-md mt-1" placeholder="Utang yang harus dibayar saat ini" oninput="formatInput(this)">
+                    </div>
+                    <div>
+                        <label for="harga-emas-harta" class="font-semibold">Asumsi Harga Emas per Gram (Rp)</label>
+                        <input type="text" id="harga-emas-harta" value="1.300.000" class="w-full p-2 border border-gray-300 rounded-md mt-1" oninput="formatInput(this)">
+                    </div>
+                    <button onclick="hitungHarta()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors">HITUNG ZAKAT HARTA</button>
+                </div>
+                <div id="hasil-harta" class="hidden mt-4 p-4 rounded-lg bg-yellow-300 text-yellow-900 font-bold text-lg text-center"></div>
+                 <div class="mt-6 p-4 border-l-4 border-green-500 bg-green-50 text-sm">
+                    <h4 class="font-bold mb-2">Keterangan:</h4>
+                    <p>Zakat harta (maal) dikenakan atas harta yang dimiliki (simpanan, emas, perak, saham, dll) yang telah mencapai nisab dan haul (tersimpan selama 1 tahun). Nisabnya setara dengan <strong>85 gram emas</strong>. Kadar zakatnya adalah <strong>2.5%</strong> dari total harta.</p>
+                </div>
+            </div>
+
+            <!-- Panel Zakat Pertanian -->
+            <div id="panel-pertanian" class="calculator-panel hidden">
+                <h3 class="text-xl font-bold text-green-700 mb-4">Zakat Pertanian</h3>
+                
+                <div class="mb-4">
+                    <label for="jenis-tanaman" class="font-semibold">Pilih Jenis Hasil Panen</label>
+                    <select id="jenis-tanaman" class="w-full p-2 border border-gray-300 rounded-md mt-1" onchange="pilihJenisTanaman()">
+                        <option value="pokok">Padi, Jagung, Palawija (Makanan Pokok)</option>
+                        <option value="komersial">Sawit, Karet, Kopi, Buah-buahan (Hasil Jual)</option>
+                    </select>
+                </div>
+                
+                <div id="form-tanaman-pokok" class="space-y-4">
+                    <div>
+                        <label for="hasil-panen-kg" class="font-semibold">Jumlah Hasil Panen (Kg)</label>
+                        <input type="number" id="hasil-panen-kg" class="w-full p-2 border border-gray-300 rounded-md mt-1" placeholder="Contoh: 800">
+                    </div>
+                    <div>
+                        <label class="font-semibold">Jenis Pengairan</label>
+                        <div class="flex gap-4 mt-1">
+                            <label><input type="radio" name="pengairan" value="0.1" checked> Tadah Hujan (Alami)</label>
+                            <label><input type="radio" name="pengairan" value="0.05"> Irigasi (Berbiaya)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="form-tanaman-komersial" class="hidden space-y-4">
+                     <div>
+                        <label for="hasil-panen-rp" class="font-semibold">Nilai Penjualan Hasil Panen (Rp)</label>
+                        <input type="text" id="hasil-panen-rp" class="w-full p-2 border border-gray-300 rounded-md mt-1" placeholder="Total pendapatan dari panen" oninput="formatInput(this)">
+                    </div>
+                     <div>
+                        <label for="biaya-operasional" class="font-semibold">Biaya Operasional (Rp)</label>
+                        <input type="text" id="biaya-operasional" class="w-full p-2 border border-gray-300 rounded-md mt-1" placeholder="Pupuk, pestisida, upah, dll." oninput="formatInput(this)">
+                    </div>
+                    <div>
+                        <label for="harga-emas-pertanian" class="font-semibold">Asumsi Harga Emas per Gram (Rp)</label>
+                        <input type="text" id="harga-emas-pertanian" value="1.300.000" class="w-full p-2 border border-gray-300 rounded-md mt-1" oninput="formatInput(this)">
+                    </div>
+                </div>
+
+                <button onclick="hitungPertanian()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors mt-4">HITUNG ZAKAT PERTANIAN</button>
+                <div id="hasil-pertanian" class="hidden mt-4 p-4 rounded-lg bg-yellow-300 text-yellow-900 font-bold text-lg text-center"></div>
+                
+                <div class="mt-6 p-4 border-l-4 border-green-500 bg-green-50 text-sm">
+                    <h4 class="font-bold mb-2">Keterangan:</h4>
+                    <p class="mb-2">Zakat pertanian wajib dikeluarkan <strong>setiap kali panen</strong> jika hasilnya telah mencapai nisab (batas wajib zakat).</p>
+                    <div id="ket-pokok">
+                        <h5 class="font-semibold text-green-800">Untuk Padi, Jagung & Palawija:</h5>
+                        <ul class="list-disc list-inside ml-2">
+                            <li>Nisab: <strong>653 kg</strong> hasil panen bersih.</li>
+                            <li>Kadar Zakat: <strong>10%</strong> jika pengairan alami (tadah hujan), atau <strong>5%</strong> jika menggunakan irigasi berbiaya.</li>
+                        </ul>
+                    </div>
+                     <div id="ket-komersial" class="hidden mt-2">
+                        <h5 class="font-semibold text-green-800">Untuk Sawit, Karet, Kopi, dll (Hasil Jual):</h5>
+                        <ul class="list-disc list-inside ml-2">
+                            <li>Pendapatan panen dikurangi biaya operasional terlebih dahulu.</li>
+                            <li>Nisab: Setara dengan harga <strong>85 gram emas</strong>.</li>
+                            <li>Kadar Zakat: <strong>2.5%</strong> dari hasil bersih (setelah dikurangi biaya).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="text-center text-white text-xs mt-6 pb-4">
+            <p>&copy; 2025 - Sahabat Umat</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- FUNGSI UTILITAS ---
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka);
+        }
+
+        function formatInput(element) {
+            // Ambil nilai, hapus semua karakter kecuali digit
+            let value = element.value.replace(/[^,\d]/g, '').toString();
+            // Hapus titik pemisah ribuan yang sudah ada
+            let cleanValue = value.replace(/\./g, '');
+            // Format ulang dengan titik
+            let formattedValue = cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            // Setel kembali nilai input
+            element.value = formattedValue;
+        }
+        
+        function getNumericValue(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element || !element.value) {
+                return 0;
+            }
+            // Hapus titik dari string untuk mendapatkan angka murni
+            const rawValue = element.value.replace(/\./g, '');
+            return parseFloat(rawValue) || 0;
+        }
+
+        // --- LOGIKA KALKULATOR ZAKAT ---
+        function hitungFitrah() {
+            const jumlahOrang = parseFloat(document.getElementById('jumlah-orang').value) || 0;
+            const hargaBeras = getNumericValue('harga-beras');
+            const hasilDiv = document.getElementById('hasil-fitrah');
+            if (jumlahOrang > 0 && hargaBeras > 0) {
+                const zakatUang = jumlahOrang * 2.5 * hargaBeras;
+                const zakatBeras = jumlahOrang * 2.5;
+                hasilDiv.innerHTML = `Zakat Anda: <strong>${zakatBeras.toFixed(1)} kg Beras</strong><br>atau senilai <strong>${formatRupiah(zakatUang)}</strong>`;
+                hasilDiv.classList.remove('hidden');
+            } else {
+                hasilDiv.innerHTML = 'Mohon isi semua kolom dengan benar.';
+                hasilDiv.classList.remove('hidden');
+            }
+        }
+
+        function hitungPenghasilan() {
+            const penghasilan = getNumericValue('penghasilan');
+            const hargaEmas = getNumericValue('harga-emas-profesi');
+            const hasilDiv = document.getElementById('hasil-penghasilan');
+            const nisabTahunan = 85 * hargaEmas;
+            const nisabBulanan = nisabTahunan / 12;
+            if (penghasilan >= nisabBulanan) {
+                const zakat = penghasilan * 0.025;
+                hasilDiv.innerHTML = `Penghasilan Anda sudah mencapai nisab.<br>Zakat per Bulan: <strong>${formatRupiah(zakat)}</strong>`;
+            } else {
+                hasilDiv.innerHTML = `Penghasilan Anda belum mencapai nisab bulanan (${formatRupiah(nisabBulanan)}).<br><strong>Anda tidak wajib membayar zakat penghasilan.</strong>`;
+            }
+            hasilDiv.classList.remove('hidden');
+        }
+
+        function hitungHarta() {
+            const tabungan = getNumericValue('tabungan');
+            const hartaLain = getNumericValue('harta-lain');
+            const utang = getNumericValue('utang');
+            const hargaEmas = getNumericValue('harga-emas-harta');
+            const hasilDiv = document.getElementById('hasil-harta');
+            const totalHarta = tabungan + hartaLain - utang;
+            const nisab = 85 * hargaEmas;
+            if (totalHarta >= nisab) {
+                const zakat = totalHarta * 0.025;
+                hasilDiv.innerHTML = `Total harta Anda mencapai nisab.<br>Zakat Harta (Maal) Anda: <strong>${formatRupiah(zakat)}</strong>`;
+            } else {
+                hasilDiv.innerHTML = `Total harta Anda (${formatRupiah(totalHarta)}) belum mencapai nisab (${formatRupiah(nisab)}).<br><strong>Anda tidak wajib membayar zakat harta.</strong>`;
+            }
+            hasilDiv.classList.remove('hidden');
+        }
+
+        function hitungPertanian() {
+            const jenis = document.getElementById('jenis-tanaman').value;
+            const hasilDiv = document.getElementById('hasil-pertanian');
+
+            if (jenis === 'pokok') {
+                const hasilPanen = parseFloat(document.getElementById('hasil-panen-kg').value) || 0;
+                const kadar = parseFloat(document.querySelector('input[name="pengairan"]:checked').value);
+                const nisab = 653; // dalam kg
+                if (hasilPanen >= nisab) {
+                    const zakat = hasilPanen * kadar;
+                    hasilDiv.innerHTML = `Hasil panen Anda mencapai nisab.<br>Zakat Pertanian Anda: <strong>${zakat.toFixed(1)} kg</strong>`;
+                } else {
+                    hasilDiv.innerHTML = `Hasil panen Anda (${hasilPanen} kg) belum mencapai nisab (${nisab} kg).<br><strong>Anda tidak wajib membayar zakat.</strong>`;
+                }
+            } else if (jenis === 'komersial') {
+                const hasilRp = getNumericValue('hasil-panen-rp');
+                const biaya = getNumericValue('biaya-operasional');
+                const hargaEmas = getNumericValue('harga-emas-pertanian');
+                
+                const hasilBersih = hasilRp - biaya;
+                const nisab = 85 * hargaEmas;
+
+                if (hasilBersih >= nisab) {
+                    const zakat = hasilBersih * 0.025;
+                    hasilDiv.innerHTML = `Hasil bersih panen Anda mencapai nisab.<br>Zakat Pertanian Anda: <strong>${formatRupiah(zakat)}</strong>`;
+                } else {
+                    hasilDiv.innerHTML = `Hasil bersih panen Anda (${formatRupiah(hasilBersih)}) belum mencapai nisab (${formatRupiah(nisab)}).<br><strong>Anda tidak wajib membayar zakat.</strong>`;
+                }
+            }
+            hasilDiv.classList.remove('hidden');
+        }
+
+
+        // --- LOGIKA NAVIGASI & INTERAKSI UI ---
+        const tabs = document.querySelectorAll('.tab-button');
+        const panels = document.querySelectorAll('.calculator-panel');
+
+        function switchTab(targetId) {
+            panels.forEach(panel => panel.classList.add('hidden'));
+            tabs.forEach(tab => {
+                tab.classList.remove('active-tab');
+                tab.classList.add('inactive-tab');
+                if (tab.id === `tab-${targetId}`) {
+                    tab.classList.add('active-tab');
+                    tab.classList.remove('inactive-tab');
+                }
+            });
+            const targetPanel = document.getElementById(`panel-${targetId}`);
+            if (targetPanel) {
+                targetPanel.classList.remove('hidden');
+            }
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetId = tab.id.split('-')[1];
+                switchTab(targetId);
+            });
+        });
+        
+        function pilihJenisTanaman() {
+            const jenis = document.getElementById('jenis-tanaman').value;
+            const formPokok = document.getElementById('form-tanaman-pokok');
+            const formKomersial = document.getElementById('form-tanaman-komersial');
+            const ketPokok = document.getElementById('ket-pokok');
+            const ketKomersial = document.getElementById('ket-komersial');
+            const hasilDiv = document.getElementById('hasil-pertanian');
+
+            if (jenis === 'pokok') {
+                formPokok.classList.remove('hidden');
+                formKomersial.classList.add('hidden');
+                ketPokok.classList.remove('hidden');
+                ketKomersial.classList.add('hidden');
+            } else {
+                formPokok.classList.add('hidden');
+                formKomersial.classList.remove('hidden');
+                ketPokok.classList.add('hidden');
+                ketKomersial.classList.remove('hidden');
+            }
+            hasilDiv.classList.add('hidden');
+        }
+
+        window.addEventListener('load', () => {
+            switchTab('fitrah');
+            pilihJenisTanaman();
+        });
+
+    </script>
+</body>
+</html>
